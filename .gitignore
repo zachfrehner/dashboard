@@ -28,8 +28,8 @@ backend/.mvn/wrapper/maven-wrapper.jar
 *.db
 *.sqlite
 *.sqlite3
-database/data/
+database/data/*
+!database/data/.gitkeep
 
 # Docker and local runtime
 docker/.runtime/
-
