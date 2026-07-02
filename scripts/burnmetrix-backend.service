@@ -1,0 +1,17 @@
+[Unit]
+Description=BurnMetrix Dashboard Backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/opt/burnmetrix-dashboard/backend
+Environment=SPRING_DATASOURCE_URL=jdbc:sqlite:/opt/burnmetrix-dashboard/database/data/burnmetrix.db
+ExecStart=/usr/bin/java -jar /opt/burnmetrix-dashboard/backend/burnmetrix-backend.jar
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+

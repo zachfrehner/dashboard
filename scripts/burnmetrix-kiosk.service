@@ -1,0 +1,17 @@
+[Unit]
+Description=BurnMetrix Dashboard Chromium Kiosk
+After=graphical.target burnmetrix-backend.service
+Wants=burnmetrix-backend.service
+
+[Service]
+Type=simple
+User=pi
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/pi/.Xauthority
+ExecStart=/usr/bin/chromium-browser --noerrdialogs --disable-infobars --kiosk --app=http://localhost
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target
+

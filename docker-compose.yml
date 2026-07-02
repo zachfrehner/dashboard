@@ -1,0 +1,21 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./database/data:/app/database/data
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:sqlite:/app/database/data/burnmetrix.db
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+

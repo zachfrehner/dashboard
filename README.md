@@ -2,7 +2,7 @@
 
 BurnMetrix Dashboard is a Raspberry Pi kiosk dashboard for cycling, weather, calendar, and system status data.
 
-This repository is being built incrementally. Phase 1 establishes the production repository structure; later phases add the Spring Boot backend, React frontend, mock services, deployment automation, and documentation.
+The app is designed for a Raspberry Pi 4 connected to a 10-inch touchscreen in kiosk mode. It can also run locally for development.
 
 ## Planned Stack
 
@@ -24,3 +24,42 @@ burnmetrix-dashboard/
   .github/
 ```
 
+## Quick Start
+
+### Frontend Only
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173`. The frontend falls back to mock data if the backend is not running.
+
+### Backend
+
+```bash
+cd backend
+mvn spring-boot:run
+```
+
+The backend runs on `http://localhost:8080`.
+
+### Docker Compose
+
+```bash
+docker compose up --build
+```
+
+Frontend: `http://localhost:5173`
+
+Backend: `http://localhost:8080`
+
+### Raspberry Pi
+
+```bash
+chmod +x scripts/install.sh
+./scripts/install.sh
+```
+
+The installer builds the app, configures systemd services, and starts Chromium in kiosk mode pointed at the local dashboard.
