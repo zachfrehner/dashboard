@@ -8,6 +8,8 @@
 - Spring Boot backend skeleton
 - React frontend with routes and mock dashboard pages
 - Docker and native Raspberry Pi deployment assets
+- Manual kiosk start/stop controls
+- BurnMetrix calorie calculator page
 
 ## Next Integrations
 

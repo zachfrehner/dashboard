@@ -84,11 +84,14 @@ rm -f /etc/nginx/sites-enabled/default
 
 sed "s/User=pi/User=${SERVICE_USER}/g" "${PROJECT_ROOT}/scripts/burnmetrix-backend.service" >/etc/systemd/system/burnmetrix-backend.service
 sed "s/User=pi/User=${SERVICE_USER}/g; s#/home/pi#/home/${SERVICE_USER}#g; s#/usr/bin/chromium-browser#${CHROMIUM_COMMAND}#g" "${PROJECT_ROOT}/scripts/burnmetrix-kiosk.service" >/etc/systemd/system/burnmetrix-kiosk.service
+install -m 755 "${PROJECT_ROOT}/scripts/start-dashboard.sh" /usr/local/bin/burnmetrix-start
+install -m 755 "${PROJECT_ROOT}/scripts/stop-dashboard.sh" /usr/local/bin/burnmetrix-stop
 
 systemctl daemon-reload
-systemctl enable nginx burnmetrix-backend burnmetrix-kiosk
+systemctl enable nginx
+systemctl disable burnmetrix-backend burnmetrix-kiosk || true
 systemctl restart nginx
-systemctl restart burnmetrix-backend
-systemctl restart burnmetrix-kiosk || true
 
-echo "BurnMetrix Dashboard installed. Chromium will open http://localhost in kiosk mode on boot."
+echo "BurnMetrix Dashboard installed."
+echo "Start it manually with: burnmetrix-start"
+echo "Stop it manually with: burnmetrix-stop"

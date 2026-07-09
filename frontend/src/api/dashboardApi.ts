@@ -35,3 +35,17 @@ export const getRideDetail = (rideId: string) =>
 
 export const getSettings = () =>
   withFallback<Settings>(() => apiClient.get('/api/settings'), mockSettings);
+
+export const closeKiosk = async () => {
+  if (import.meta.env.MODE === 'test') {
+    return { requested: false, message: 'Kiosk close skipped during tests' };
+  }
+
+  try {
+    const response = await apiClient.post<{ requested: boolean; message: string }>('/api/system/kiosk/close');
+    return response.data;
+  } catch {
+    window.close();
+    return { requested: false, message: 'Backend unavailable; browser close requested' };
+  }
+};

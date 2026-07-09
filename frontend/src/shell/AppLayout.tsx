@@ -1,22 +1,34 @@
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import HomeIcon from '@mui/icons-material/Home';
+import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import SettingsIcon from '@mui/icons-material/Settings';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import { Box, Divider, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
+import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
+import { closeKiosk } from '../api/dashboardApi';
 
 const navItems = [
   { label: 'Home', path: '/', icon: <HomeIcon /> },
   { label: 'Calendar', path: '/calendar', icon: <CalendarMonthIcon /> },
   { label: 'Weather', path: '/weather', icon: <WbSunnyIcon /> },
   { label: 'Cycling', path: '/cycling', icon: <DirectionsBikeIcon /> },
+  { label: 'Calories', path: '/calories', icon: <LocalFireDepartmentIcon /> },
   { label: 'Settings', path: '/settings', icon: <SettingsIcon /> },
 ];
 
 const drawerWidth = 212;
 
 export function AppLayout() {
+  const [confirmClose, setConfirmClose] = useState(false);
+
+  const handleCloseKiosk = async () => {
+    await closeKiosk();
+    setConfirmClose(false);
+  };
+
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <Drawer
@@ -29,6 +41,7 @@ export function AppLayout() {
             boxSizing: 'border-box',
             borderRight: '1px solid rgba(255,255,255,0.08)',
             backgroundColor: '#0b1016',
+            display: 'flex',
           },
         }}
       >
@@ -43,7 +56,7 @@ export function AppLayout() {
           </Box>
         </Toolbar>
         <Divider />
-        <List sx={{ px: 1.5, py: 2 }}>
+        <List sx={{ px: 1.5, py: 2, flexGrow: 1 }}>
           {navItems.map((item) => (
             <ListItemButton
               key={item.path}
@@ -65,11 +78,36 @@ export function AppLayout() {
             </ListItemButton>
           ))}
         </List>
+        <Box sx={{ p: 1.5 }}>
+          <Button
+            fullWidth
+            color="error"
+            variant="outlined"
+            size="large"
+            startIcon={<PowerSettingsNewIcon />}
+            onClick={() => setConfirmClose(true)}
+          >
+            Close
+          </Button>
+        </Box>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, minWidth: 0, p: { xs: 2, md: 3 }, pb: 5 }}>
         <Outlet />
       </Box>
+      <Dialog open={confirmClose} onClose={() => setConfirmClose(false)}>
+        <DialogTitle>Close BurnMetrix?</DialogTitle>
+        <DialogContent>
+          <Typography color="text.secondary">
+            This closes the kiosk browser. Start it again from the Pi with burnmetrix-start.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmClose(false)}>Cancel</Button>
+          <Button color="error" variant="contained" onClick={handleCloseKiosk}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
-

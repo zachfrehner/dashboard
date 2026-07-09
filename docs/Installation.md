@@ -19,7 +19,8 @@ The installer:
 - Publishes frontend files to `/opt/burnmetrix-dashboard/frontend`.
 - Publishes the backend jar to `/opt/burnmetrix-dashboard/backend`.
 - Creates systemd services for the backend and kiosk browser.
-- Configures Chromium to open `http://localhost`.
+- Installs manual commands: `burnmetrix-start` and `burnmetrix-stop`.
+- Configures Chromium to open `http://localhost` when started manually.
 
 ## Docker
 
@@ -28,6 +29,18 @@ docker compose up --build
 ```
 
 ## Troubleshooting
+
+Start the dashboard:
+
+```bash
+burnmetrix-start
+```
+
+Stop the dashboard:
+
+```bash
+burnmetrix-stop
+```
 
 Check services:
 

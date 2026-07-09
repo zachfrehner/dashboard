@@ -62,4 +62,16 @@ chmod +x scripts/install.sh
 ./scripts/install.sh
 ```
 
-The installer builds the app, configures systemd services, and starts Chromium in kiosk mode pointed at the local dashboard.
+The installer builds the app and configures systemd services. It does not start the kiosk automatically.
+
+Start manually on the Pi:
+
+```bash
+burnmetrix-start
+```
+
+Stop manually:
+
+```bash
+burnmetrix-stop
+```
