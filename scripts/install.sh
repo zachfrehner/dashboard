@@ -59,7 +59,8 @@ sudo -u "${SERVICE_USER}" mvn -f "${PROJECT_ROOT}/backend/pom.xml" clean package
 cp "${PROJECT_ROOT}"/backend/target/*.jar "${INSTALL_DIR}/backend/burnmetrix-backend.jar"
 
 echo "Building frontend..."
-sudo -u "${SERVICE_USER}" npm --prefix "${PROJECT_ROOT}/frontend" install
+rm -rf "${PROJECT_ROOT}/frontend/node_modules"
+sudo -u "${SERVICE_USER}" npm --prefix "${PROJECT_ROOT}/frontend" ci --include=optional
 sudo -u "${SERVICE_USER}" npm --prefix "${PROJECT_ROOT}/frontend" run build
 rsync -a --delete "${PROJECT_ROOT}/frontend/dist/" "${INSTALL_DIR}/frontend/"
 
