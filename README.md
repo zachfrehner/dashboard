@@ -75,3 +75,5 @@ Stop manually:
 ```bash
 burnmetrix-stop
 ```
+
+The Calories page includes the Strava metabolic analysis workflow from the earlier BurnMetrix app. Configure `STRAVA_CLIENT_ID` and `STRAVA_CLIENT_SECRET` for the backend, then connect Strava from the dashboard.

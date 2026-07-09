@@ -27,3 +27,10 @@ management:
 burnmetrix:
   security:
     authentication-enabled: false
+  metabolic:
+    strava-client-id: ${STRAVA_CLIENT_ID:}
+    strava-client-secret: ${STRAVA_CLIENT_SECRET:}
+    strava-redirect-uri: ${STRAVA_REDIRECT_URI:http://localhost:8080/api/metabolic/auth/callback}
+    token-file: ${BURNMETRIX_TOKEN_FILE:../database/data/strava-tokens.json}
+    glycogen-start-grams: ${GLYCOGEN_START_GRAMS:500}
+    planned-carb-intake-g-per-hour: ${PLANNED_CARB_INTAKE_G_PER_HOUR:60}

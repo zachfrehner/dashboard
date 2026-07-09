@@ -44,6 +44,15 @@ install -d -o "${SERVICE_USER}" -g "${SERVICE_USER}" "${INSTALL_DIR}"
 install -d -o "${SERVICE_USER}" -g "${SERVICE_USER}" "${INSTALL_DIR}/backend"
 install -d -o "${SERVICE_USER}" -g "${SERVICE_USER}" "${INSTALL_DIR}/frontend"
 install -d -o "${SERVICE_USER}" -g "${SERVICE_USER}" "${INSTALL_DIR}/database/data"
+install -d /etc/burnmetrix-dashboard
+if [[ ! -f /etc/burnmetrix-dashboard/backend.env ]]; then
+  cat >/etc/burnmetrix-dashboard/backend.env <<ENV
+# Optional Strava integration for the Calories page.
+# STRAVA_CLIENT_ID=
+# STRAVA_CLIENT_SECRET=
+STRAVA_REDIRECT_URI=http://localhost:8080/api/metabolic/auth/callback
+ENV
+fi
 
 echo "Building backend..."
 sudo -u "${SERVICE_USER}" mvn -f "${PROJECT_ROOT}/backend/pom.xml" clean package

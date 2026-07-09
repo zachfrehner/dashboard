@@ -85,3 +85,67 @@ export interface Settings {
   version: string;
 }
 
+export interface MetabolicStatus {
+  configured: boolean;
+  connected: boolean;
+  athlete: null | {
+    id: number;
+    firstname: string;
+    lastname: string;
+  };
+}
+
+export interface MetabolicActivity {
+  id: number;
+  name: string;
+  sportType: string;
+  startDateLocal: string;
+  movingTime: number;
+  distance: number;
+  hasHeartrate: boolean;
+  averageHeartrate: number | null;
+  maxHeartrate: number | null;
+}
+
+export interface MetabolicMetrics {
+  fatCalories: number;
+  carbohydrateCalories: number;
+  totalCalories: number;
+  maxPower: number | null;
+  gramsOfFatBurned: number;
+  gramsOfCarbohydrateBurned: number;
+  fatOxidationRateGPerHr: number;
+  carbOxidationRateGPerHr: number;
+  estimatedGlycogenDepletion: number;
+  remainingGlycogen: number;
+  timeUntilBonk: string;
+  fuelingRecommendation: string;
+  fuelDeficitOverRide: number;
+  efficiencyDrift: number | null;
+  heartRateDecoupling: number | null;
+  aerobicEfficiency: string;
+  metabolicFlexibilityScore: number;
+  personalizedZone2Range: string;
+}
+
+export interface MetabolicChartSample {
+  second: number;
+  heartRate: number;
+  fatGPerMin: number;
+  carbGPerMin: number;
+}
+
+export interface MetabolicAnalysis {
+  activity: {
+    id: number;
+    name: string;
+    description: string;
+    movingTime: number;
+    distance: number;
+  };
+  metrics: MetabolicMetrics;
+  report: string;
+  chartSamples: MetabolicChartSample[];
+  sampleCount: number;
+  labRows: number;
+}

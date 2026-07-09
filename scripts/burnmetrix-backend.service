@@ -8,10 +8,10 @@ Type=simple
 User=pi
 WorkingDirectory=/opt/burnmetrix-dashboard/backend
 Environment=SPRING_DATASOURCE_URL=jdbc:sqlite:/opt/burnmetrix-dashboard/database/data/burnmetrix.db
+EnvironmentFile=-/etc/burnmetrix-dashboard/backend.env
 ExecStart=/usr/bin/java -jar /opt/burnmetrix-dashboard/backend/burnmetrix-backend.jar
 Restart=always
 RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
-

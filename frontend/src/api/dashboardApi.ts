@@ -1,6 +1,6 @@
 import { apiClient } from './client';
 import { mockCyclingSummary, mockEvents, mockRideDetail, mockSettings, mockWeather } from './mockData';
-import type { CalendarEvent, CyclingSummary, RideDetail, Settings, WeatherCurrent } from './types';
+import type { CalendarEvent, CyclingSummary, MetabolicActivity, MetabolicAnalysis, MetabolicStatus, RideDetail, Settings, WeatherCurrent } from './types';
 
 const withFallback = async <T>(request: () => Promise<{ data: T }>, fallback: T): Promise<T> => {
   if (import.meta.env.MODE === 'test') {
@@ -48,4 +48,26 @@ export const closeKiosk = async () => {
     window.close();
     return { requested: false, message: 'Backend unavailable; browser close requested' };
   }
+};
+
+export const getMetabolicStatus = () =>
+  withFallback<MetabolicStatus>(() => apiClient.get('/api/metabolic/status'), {
+    configured: false,
+    connected: false,
+    athlete: null,
+  });
+
+export const getMetabolicActivities = async () => {
+  const response = await apiClient.get<MetabolicActivity[]>('/api/metabolic/activities');
+  return response.data;
+};
+
+export const analyzeMetabolicActivity = async (activityId: number | string) => {
+  const response = await apiClient.get<MetabolicAnalysis>(`/api/metabolic/analyze/${activityId}`);
+  return response.data;
+};
+
+export const updateMetabolicDescription = async (activityId: number | string, report: string) => {
+  const response = await apiClient.post<{ ok: boolean }>(`/api/metabolic/update-description/${activityId}`, { report });
+  return response.data;
 };

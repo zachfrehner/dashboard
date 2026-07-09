@@ -9,7 +9,7 @@
 - React frontend with routes and mock dashboard pages
 - Docker and native Raspberry Pi deployment assets
 - Manual kiosk start/stop controls
-- BurnMetrix calorie calculator page
+- BurnMetrix Strava metabolic analysis page
 
 ## Next Integrations
 

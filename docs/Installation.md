@@ -36,6 +36,20 @@ Start the dashboard:
 burnmetrix-start
 ```
 
+## Strava Metabolic Analysis
+
+The Calories page can connect to Strava and analyze recent activities against the bundled lab CSV.
+
+Set these values in `/etc/burnmetrix-dashboard/backend.env` before starting the app:
+
+```bash
+STRAVA_CLIENT_ID=your-client-id
+STRAVA_CLIENT_SECRET=your-client-secret
+STRAVA_REDIRECT_URI=http://localhost:8080/api/metabolic/auth/callback
+```
+
+In Strava, set the app authorization callback domain to `localhost`.
+
 Stop the dashboard:
 
 ```bash
