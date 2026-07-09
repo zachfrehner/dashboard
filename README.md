@@ -7,7 +7,7 @@ The app is designed for a Raspberry Pi 4 connected to a 10-inch touchscreen in k
 ## Planned Stack
 
 - React, TypeScript, Vite, Material UI, React Router, TanStack Query, Recharts, Axios
-- Java 21, Spring Boot 3, Maven, Spring Security, Spring Scheduling, Spring Web, Jackson
+- Java 17, Spring Boot 3, Maven, Spring Security, Spring Scheduling, Spring Web, Jackson
 - SQLite
 - Docker, Docker Compose, native Raspberry Pi install script, systemd, Chromium kiosk mode
 

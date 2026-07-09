@@ -14,7 +14,7 @@ BurnMetrix Dashboard is split into a React frontend and Spring Boot backend.
 
 ## Backend
 
-- Spring Boot 3 application on Java 21.
+- Spring Boot 3 application on Java 17 for Raspberry Pi OS package compatibility.
 - REST controllers expose `/api/**`.
 - Controllers depend on service interfaces.
 - Mock services implement the initial behavior.

@@ -13,7 +13,7 @@ chmod +x scripts/install.sh
 
 The installer:
 
-- Installs Java 21, Maven, Node.js, npm, Chromium, nginx, and supporting packages.
+- Installs Java 17, Maven, Node.js, Chromium, nginx, and supporting packages.
 - Builds the Spring Boot backend.
 - Builds the Vite frontend.
 - Publishes frontend files to `/opt/burnmetrix-dashboard/frontend`.

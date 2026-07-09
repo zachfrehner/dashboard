@@ -13,16 +13,30 @@ fi
 echo "Installing BurnMetrix Dashboard for user ${SERVICE_USER}"
 
 apt-get update
+apt-get install -y ca-certificates curl gnupg
+
+if ! command -v node >/dev/null 2>&1 || ! node --version | grep -Eq '^v(20|22|24)\.'; then
+  echo "Installing Node.js 20 from NodeSource..."
+  curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+fi
+
+if apt-cache show chromium-browser >/dev/null 2>&1; then
+  CHROMIUM_PACKAGE="chromium-browser"
+  CHROMIUM_COMMAND="/usr/bin/chromium-browser"
+else
+  CHROMIUM_PACKAGE="chromium"
+  CHROMIUM_COMMAND="/usr/bin/chromium"
+fi
+
 apt-get install -y \
   ca-certificates \
-  chromium-browser \
+  "${CHROMIUM_PACKAGE}" \
   curl \
   git \
   maven \
   nginx \
   nodejs \
-  npm \
-  openjdk-21-jdk \
+  openjdk-17-jdk \
   rsync \
   x11-xserver-utils
 
@@ -69,7 +83,7 @@ ln -sf /etc/nginx/sites-available/burnmetrix-dashboard /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
 sed "s/User=pi/User=${SERVICE_USER}/g" "${PROJECT_ROOT}/scripts/burnmetrix-backend.service" >/etc/systemd/system/burnmetrix-backend.service
-sed "s/User=pi/User=${SERVICE_USER}/g; s#/home/pi#/home/${SERVICE_USER}#g" "${PROJECT_ROOT}/scripts/burnmetrix-kiosk.service" >/etc/systemd/system/burnmetrix-kiosk.service
+sed "s/User=pi/User=${SERVICE_USER}/g; s#/home/pi#/home/${SERVICE_USER}#g; s#/usr/bin/chromium-browser#${CHROMIUM_COMMAND}#g" "${PROJECT_ROOT}/scripts/burnmetrix-kiosk.service" >/etc/systemd/system/burnmetrix-kiosk.service
 
 systemctl daemon-reload
 systemctl enable nginx burnmetrix-backend burnmetrix-kiosk
