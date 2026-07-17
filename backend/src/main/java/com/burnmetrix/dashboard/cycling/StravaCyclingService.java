@@ -10,9 +10,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -52,7 +53,10 @@ public class StravaCyclingService implements CyclingService {
             if (!configured() || readToken() == null) {
                 return fallback.summary(period);
             }
-            List<JsonNode> activities = activities(period, 100);
+            if (period != CyclingPeriod.TODAY && period != CyclingPeriod.WEEK) {
+                return fallback.summary(period);
+            }
+            List<JsonNode> activities = activities(period);
             if (activities.isEmpty()) {
                 return emptySummary(period);
             }
@@ -194,13 +198,16 @@ public class StravaCyclingService implements CyclingService {
                 List.of(summaryFromActivity(activity)));
     }
 
-    private List<JsonNode> activities(CyclingPeriod period, int perPage) throws IOException, InterruptedException {
+    private List<JsonNode> activities(CyclingPeriod period) throws IOException, InterruptedException {
+        int perPage = 200;
         String after = after(period).map(value -> "&after=" + value.getEpochSecond()).orElse("");
         JsonNode response = stravaApi("/athlete/activities?per_page=" + perPage + "&page=1" + after);
         List<JsonNode> activities = new ArrayList<>();
-        for (JsonNode activity : response) {
-            if (isRide(activity)) {
-                activities.add(activity);
+        if (response.isArray()) {
+            for (JsonNode activity : response) {
+                if (isRide(activity)) {
+                    activities.add(activity);
+                }
             }
         }
         activities.sort(Comparator.comparing(StravaCyclingService::instant).reversed());
@@ -209,13 +216,11 @@ public class StravaCyclingService implements CyclingService {
 
     private static java.util.Optional<Instant> after(CyclingPeriod period) {
         ZoneId zone = ZoneId.systemDefault();
-        Instant now = Instant.now();
+        LocalDate today = LocalDate.now(zone);
         return switch (period) {
-            case TODAY -> java.util.Optional.of(LocalDate.now(zone).atStartOfDay(zone).toInstant());
-            case WEEK -> java.util.Optional.of(now.minus(7, ChronoUnit.DAYS));
-            case MONTH -> java.util.Optional.of(now.minus(30, ChronoUnit.DAYS));
-            case YEAR -> java.util.Optional.of(now.minus(365, ChronoUnit.DAYS));
-            case LIFETIME -> java.util.Optional.empty();
+            case TODAY -> java.util.Optional.of(today.atStartOfDay(zone).toInstant());
+            case WEEK -> java.util.Optional.of(today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).atStartOfDay(zone).toInstant());
+            case MONTH, YEAR, LIFETIME -> java.util.Optional.empty();
         };
     }
 

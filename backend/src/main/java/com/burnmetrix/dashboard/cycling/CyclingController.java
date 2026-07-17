@@ -25,21 +25,6 @@ public class CyclingController {
         return cyclingService.summary(CyclingPeriod.WEEK);
     }
 
-    @GetMapping("/month")
-    public CyclingSummaryResponse month() {
-        return cyclingService.summary(CyclingPeriod.MONTH);
-    }
-
-    @GetMapping("/year")
-    public CyclingSummaryResponse year() {
-        return cyclingService.summary(CyclingPeriod.YEAR);
-    }
-
-    @GetMapping("/lifetime")
-    public CyclingSummaryResponse lifetime() {
-        return cyclingService.summary(CyclingPeriod.LIFETIME);
-    }
-
     @GetMapping("/rides/{rideId}")
     public RideDetailResponse ride(@PathVariable String rideId) {
         return cyclingService.rideDetail(rideId);

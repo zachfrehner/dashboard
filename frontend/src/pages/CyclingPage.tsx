@@ -9,7 +9,7 @@ import { PageHeader } from '../components/PageHeader';
 import { ZoneChart } from '../components/ZoneChart';
 import { formatDuration, formatFeet, formatMiles } from '../utils/format';
 
-const periods = ['today', 'week', 'month', 'year', 'lifetime'];
+const periods = ['today', 'week'];
 
 export function CyclingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -82,4 +82,3 @@ export function CyclingPage() {
     </Stack>
   );
 }
-
