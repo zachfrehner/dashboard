@@ -5,6 +5,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,9 +35,12 @@ public class MetabolicController {
     }
 
     @GetMapping("/auth/callback")
-    public ResponseEntity<Void> callback(@RequestParam String code) throws IOException, InterruptedException {
+    public ResponseEntity<Void> callback(@RequestParam String code, HttpServletRequest request) throws IOException, InterruptedException {
         metabolicService.completeAuthorization(code);
-        return ResponseEntity.status(302).location(URI.create("/calories?connected=1")).build();
+        String host = request.getServerName() == null || request.getServerName().isBlank()
+                ? "localhost"
+                : request.getServerName();
+        return ResponseEntity.status(302).location(URI.create(request.getScheme() + "://" + host + "/calories?connected=1")).build();
     }
 
     @GetMapping("/status")
