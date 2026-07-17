@@ -207,6 +207,26 @@ public class StravaMetabolicService implements MetabolicService {
             double hr = numberFrom(row, List.of("heart_rate_bpm", "heart_rate", "hr_bpm", "hr", "bpm"));
             double fat = numberFrom(row, List.of("fat_g_per_min", "fat_g_min", "fat_oxidation_g_min"));
             double carb = numberFrom(row, List.of("carb_g_per_min", "carb_g_min", "carb_oxidation_g_min", "cho_g_per_min"));
+            double fatCalPerMin = numberFrom(row, List.of("fat_cal_per_min", "fat_kcal_per_min"));
+            double carbCalPerMin = numberFrom(row, List.of("carb_cal_per_min", "carb_kcal_per_min", "cho_cal_per_min"));
+            double fatCalPerHour = numberFrom(row, List.of("fat_calories_kcal_hr", "fat_kcal_hr", "fat_cal_per_hr"));
+            double carbCalPerHour = numberFrom(row, List.of("carb_calories_kcal_hr", "carb_kcal_hr", "carb_cal_per_hr", "cho_kcal_hr"));
+            double totalCalPerHour = numberFrom(row, List.of("ree_kcal_hr", "total_kcal_hr", "kcal_hr", "energy_kcal_hr"));
+            if (!Double.isFinite(fat) && Double.isFinite(fatCalPerMin)) {
+                fat = fatCalPerMin / 9;
+            }
+            if (!Double.isFinite(carb) && Double.isFinite(carbCalPerMin)) {
+                carb = carbCalPerMin / 4;
+            }
+            if (!Double.isFinite(fat) && Double.isFinite(fatCalPerHour)) {
+                fat = (fatCalPerHour / 60) / 9;
+            }
+            if (!Double.isFinite(carb) && Double.isFinite(carbCalPerHour)) {
+                carb = (carbCalPerHour / 60) / 4;
+            }
+            if (!Double.isFinite(carb) && Double.isFinite(totalCalPerHour) && Double.isFinite(fatCalPerHour)) {
+                carb = (Math.max(0, totalCalPerHour - fatCalPerHour) / 60) / 4;
+            }
             if (Double.isFinite(hr) && Double.isFinite(fat) && Double.isFinite(carb)) {
                 rows.add(new LabRow(hr, fat, carb));
             }
