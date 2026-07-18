@@ -50,6 +50,23 @@ STRAVA_REDIRECT_URI=http://localhost:8080/api/metabolic/auth/callback
 
 In Strava, set the app authorization callback domain to `localhost`.
 
+## iCalendar
+
+Set your shared calendar subscription URL in `/etc/burnmetrix-dashboard/backend.env`:
+
+```bash
+CALENDAR_ICAL_URL="https://your-private-calendar-feed.ics"
+```
+
+If the link starts with `webcal://`, change only the scheme to `https://`.
+
+After editing the file, restart the dashboard:
+
+```bash
+burnmetrix-stop
+burnmetrix-start
+```
+
 Stop the dashboard:
 
 ```bash

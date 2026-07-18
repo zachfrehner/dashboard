@@ -51,6 +51,10 @@ if [[ ! -f /etc/burnmetrix-dashboard/backend.env ]]; then
 # STRAVA_CLIENT_ID=
 # STRAVA_CLIENT_SECRET=
 STRAVA_REDIRECT_URI=http://localhost:8080/api/metabolic/auth/callback
+
+# Optional iCalendar feed for shared family calendar events.
+# Use an https:// URL. If your feed starts with webcal://, change it to https://.
+# CALENDAR_ICAL_URL=
 ENV
 fi
 

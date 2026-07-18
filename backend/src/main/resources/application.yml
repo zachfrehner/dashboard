@@ -38,3 +38,7 @@ burnmetrix:
     location-name: Rock Springs, WY
     latitude: 41.5875
     longitude: -109.2029
+  calendar:
+    ical-url: "${CALENDAR_ICAL_URL:}"
+    look-ahead-days: ${CALENDAR_LOOK_AHEAD_DAYS:180}
+    max-events: ${CALENDAR_MAX_EVENTS:10}

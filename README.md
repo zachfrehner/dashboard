@@ -77,3 +77,5 @@ burnmetrix-stop
 ```
 
 The Calories page includes the Strava metabolic analysis workflow from the earlier BurnMetrix app. Configure `STRAVA_CLIENT_ID` and `STRAVA_CLIENT_SECRET` for the backend, then connect Strava from the dashboard.
+
+For shared calendar events, set `CALENDAR_ICAL_URL` in `/etc/burnmetrix-dashboard/backend.env` to a private iCalendar `.ics` subscription URL.
