@@ -34,3 +34,7 @@ burnmetrix:
     token-file: ${BURNMETRIX_TOKEN_FILE:../database/data/strava-tokens.json}
     glycogen-start-grams: ${GLYCOGEN_START_GRAMS:500}
     planned-carb-intake-g-per-hour: ${PLANNED_CARB_INTAKE_G_PER_HOUR:60}
+  weather:
+    location-name: Rock Springs, WY
+    latitude: 41.5875
+    longitude: -109.2029
