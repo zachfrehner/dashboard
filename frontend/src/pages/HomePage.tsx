@@ -1,65 +1,158 @@
-import { Chip, Grid, Stack, Typography } from '@mui/material';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import ArticleIcon from '@mui/icons-material/Article';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
+import { Box, Chip, Divider, Stack, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import type { ReactNode } from 'react';
 
-import { getCalendarEvents, getCurrentWeather, getCyclingSummary, getSettings } from '../api/dashboardApi';
-import { DashboardCard } from '../components/DashboardCard';
-import { PageHeader } from '../components/PageHeader';
-import { formatDateTime, formatDuration, formatFeet, formatMiles } from '../utils/format';
+import { getCalendarEvents, getCurrentWeather, getCyclingSummary } from '../api/dashboardApi';
+import { formatDateTime, formatDuration, formatMiles } from '../utils/format';
+
+const newsItems = [
+  'Training headlines ready for a news API source',
+  'Local weather and road alerts can land here',
+  'Strava and cycling news hooks can be added next',
+];
 
 export function HomePage() {
   const weather = useQuery({ queryKey: ['weather', 'current'], queryFn: getCurrentWeather });
   const events = useQuery({ queryKey: ['calendar', 'events'], queryFn: getCalendarEvents });
   const cycling = useQuery({ queryKey: ['cycling', 'week'], queryFn: () => getCyclingSummary('week') });
-  const settings = useQuery({ queryKey: ['settings'], queryFn: getSettings });
-  const currentTime = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date());
-  const nextEvent = events.data?.[0];
-  const ride = cycling.data?.recentRides[0];
+  const now = new Date();
+  const currentTime = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(now);
+  const currentDate = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'short', day: 'numeric' }).format(now);
+  const weeklyHours = cycling.data ? formatDuration(cycling.data.movingTimeSeconds) : '...';
+  const upcomingEvents = events.data?.slice(0, 4) ?? [];
 
   return (
-    <Stack spacing={3}>
-      <PageHeader title="Home" subtitle="Kiosk overview" action={<Chip color="success" label={currentTime} sx={{ fontSize: '1rem', height: 44 }} />} />
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={4}>
-          <DashboardCard
-            title="Current Weather"
-            value={weather.data ? `${Math.round(weather.data.temperatureF)}°F` : '...'}
-            detail={weather.data ? `${weather.data.condition} · Wind ${weather.data.windMph} mph` : undefined}
-          />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <DashboardCard title="Next Event" value={nextEvent?.title ?? 'None'} detail={nextEvent ? formatDateTime(nextEvent.startsAt) : 'Open calendar'} />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <DashboardCard title="Today Ride" value={ride ? formatMiles(ride.distanceMiles) : 'Rest'} detail={ride?.name ?? 'No ride logged'} />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <DashboardCard title="Weekly Mileage" value={cycling.data ? formatMiles(cycling.data.distanceMiles) : '...'} />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <DashboardCard title="Weekly Elevation" value={cycling.data ? formatFeet(cycling.data.elevationFeet) : '...'} />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <DashboardCard title="Current Streak" value="6 days" detail="Sample data" />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <DashboardCard title="System Status" value="Online" detail={settings.data ? `Mode: ${settings.data.displayMode}` : 'Checking'} />
-        </Grid>
-      </Grid>
-      <DashboardCard title="Recent Rides">
-        <Stack spacing={1.5}>
-          {cycling.data?.recentRides.map((recentRide) => (
-            <Stack key={recentRide.id} direction="row" justifyContent="space-between" alignItems="center">
-              <Stack>
-                <Typography fontWeight={700}>{recentRide.name}</Typography>
-                <Typography color="text.secondary">{formatDateTime(recentRide.startedAt)}</Typography>
-              </Stack>
-              <Typography fontWeight={800}>{formatMiles(recentRide.distanceMiles)}</Typography>
+    <Box
+      sx={{
+        height: { xs: 'auto', md: 'calc(100vh - 88px)' },
+        minHeight: { md: 0 },
+        overflow: 'hidden',
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+        gridTemplateRows: { xs: 'repeat(4, minmax(220px, auto))', md: '1fr 1fr' },
+        gap: 2,
+      }}
+    >
+      <HomePanel title="Weather" icon={<WbSunnyIcon />} accent="#f6bd60">
+        <Stack spacing={2} sx={{ height: '100%', justifyContent: 'space-between' }}>
+          <Box>
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <AccessTimeIcon color="primary" />
+              <Typography sx={{ fontSize: { xs: '2.7rem', md: '3.8rem' }, lineHeight: 1, fontWeight: 800 }}>
+                {currentTime}
+              </Typography>
+            </Stack>
+            <Typography color="text.secondary" sx={{ mt: 0.75 }}>
+              {currentDate}
+            </Typography>
+          </Box>
+          <Stack direction="row" spacing={2} alignItems="flex-end" justifyContent="space-between">
+            <Box>
+              <Typography sx={{ fontSize: { xs: '2.4rem', md: '3.2rem' }, lineHeight: 1, fontWeight: 800 }}>
+                {weather.data ? `${Math.round(weather.data.temperatureF)}°F` : '...'}
+              </Typography>
+              <Typography color="text.secondary">{weather.data?.condition ?? 'Checking weather'}</Typography>
+            </Box>
+            <Stack spacing={0.75} sx={{ minWidth: 138 }}>
+              <MetricLine label="Wind" value={weather.data ? `${weather.data.windMph} mph` : '...'} />
+              <MetricLine label="Sunrise" value={weather.data?.sunrise ?? '5:42 AM'} />
+              <MetricLine label="Sunset" value={weather.data?.sunset ?? '8:31 PM'} />
+            </Stack>
+          </Stack>
+        </Stack>
+      </HomePanel>
+
+      <HomePanel title="Cycling" icon={<DirectionsBikeIcon />} accent="#44d19d">
+        <Stack spacing={2.5} sx={{ height: '100%', justifyContent: 'center' }}>
+          <Stack direction="row" spacing={2} alignItems="stretch">
+            <MetricBlock label="Week Miles" value={cycling.data ? formatMiles(cycling.data.distanceMiles) : '...'} />
+            <MetricBlock label="Week Hours" value={weeklyHours} />
+          </Stack>
+          <Stack direction="row" spacing={1.25} flexWrap="wrap" useFlexGap>
+            <Chip label={cycling.data ? `${Math.round(cycling.data.elevationFeet).toLocaleString()} ft` : 'Elevation ...'} />
+            <Chip label={cycling.data ? `${cycling.data.calories.toLocaleString()} kcal` : 'Calories ...'} />
+            <Chip label={cycling.data ? `${cycling.data.averageHeartRateBpm} bpm avg` : 'HR ...'} />
+          </Stack>
+        </Stack>
+      </HomePanel>
+
+      <HomePanel title="Calendar" icon={<CalendarMonthIcon />} accent="#5fb7ff">
+        <Stack spacing={1.5} sx={{ height: '100%', overflow: 'hidden' }}>
+          {upcomingEvents.length === 0 && (
+            <Typography color="text.secondary">No upcoming activities</Typography>
+          )}
+          {upcomingEvents.map((event) => (
+            <Stack key={event.id} spacing={0.25}>
+              <Typography fontWeight={800} noWrap>
+                {event.title}
+              </Typography>
+              <Typography color="text.secondary" noWrap>
+                {formatDateTime(event.startsAt)}{event.location ? ` · ${event.location}` : ''}
+              </Typography>
             </Stack>
           ))}
-          {cycling.data && <Typography color="text.secondary">Moving time {formatDuration(cycling.data.movingTimeSeconds)}</Typography>}
         </Stack>
-      </DashboardCard>
+      </HomePanel>
+
+      <HomePanel title="Top Stories" icon={<ArticleIcon />} accent="#ff6b6b">
+        <Stack spacing={1.5} divider={<Divider flexItem />}>
+          {newsItems.map((item) => (
+            <Typography key={item} fontWeight={700}>
+              {item}
+            </Typography>
+          ))}
+        </Stack>
+      </HomePanel>
+    </Box>
+  );
+}
+
+function HomePanel({ title, icon, accent, children }: { title: string; icon: ReactNode; accent: string; children: ReactNode }) {
+  return (
+    <Box
+      sx={{
+        minHeight: 0,
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 2,
+        bgcolor: 'background.paper',
+        p: { xs: 2, md: 2.5 },
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <Stack direction="row" alignItems="center" spacing={1} sx={{ color: accent, mb: 1.5 }}>
+        {icon}
+        <Typography fontWeight={800}>{title}</Typography>
+      </Stack>
+      <Box sx={{ minHeight: 0, flex: 1 }}>{children}</Box>
+    </Box>
+  );
+}
+
+function MetricLine({ label, value }: { label: string; value: string }) {
+  return (
+    <Stack direction="row" justifyContent="space-between" spacing={2}>
+      <Typography color="text.secondary">{label}</Typography>
+      <Typography fontWeight={800}>{value}</Typography>
     </Stack>
   );
 }
 
+function MetricBlock({ label, value }: { label: string; value: string }) {
+  return (
+    <Box sx={{ flex: 1, minWidth: 0 }}>
+      <Typography color="text.secondary" fontWeight={700} sx={{ mb: 0.75 }}>
+        {label}
+      </Typography>
+      <Typography sx={{ fontSize: { xs: '2rem', md: '2.6rem' }, lineHeight: 1, fontWeight: 800 }}>
+        {value}
+      </Typography>
+    </Box>
+  );
+}

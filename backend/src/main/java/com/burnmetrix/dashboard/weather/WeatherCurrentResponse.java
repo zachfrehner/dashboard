@@ -10,6 +10,7 @@ public record WeatherCurrentResponse(
         int humidityPercent,
         double windMph,
         int uvIndex,
-        Instant observedAt) {
+        Instant observedAt,
+        String sunrise,
+        String sunset) {
 }
-

@@ -1,5 +1,6 @@
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
+import ArticleIcon from '@mui/icons-material/Article';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import HomeIcon from '@mui/icons-material/Home';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
@@ -16,6 +17,7 @@ const navItems = [
   { label: 'Weather', path: '/weather', icon: <WbSunnyIcon /> },
   { label: 'Cycling', path: '/cycling', icon: <DirectionsBikeIcon /> },
   { label: 'Calories', path: '/calories', icon: <LocalFireDepartmentIcon /> },
+  { label: 'News', path: '/news', icon: <ArticleIcon /> },
   { label: 'Settings', path: '/settings', icon: <SettingsIcon /> },
 ];
 
@@ -48,7 +50,7 @@ export function AppLayout() {
         <Toolbar sx={{ minHeight: 88, px: 3 }}>
           <Box>
             <Typography fontWeight={800} fontSize="1.15rem">
-              BurnMetrix
+              Frehner Home
             </Typography>
             <Typography color="text.secondary" fontSize="0.8rem">
               Dashboard

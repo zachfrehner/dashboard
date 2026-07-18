@@ -7,6 +7,8 @@ export interface WeatherCurrent {
   windMph: number;
   uvIndex: number;
   observedAt: string;
+  sunrise?: string;
+  sunset?: string;
 }
 
 export interface CalendarEvent {

@@ -12,6 +12,8 @@ export const mockWeather: WeatherCurrent = {
   windMph: 8.4,
   uvIndex: 5,
   observedAt: now.toISOString(),
+  sunrise: '5:42 AM',
+  sunset: '8:31 PM',
 };
 
 export const mockEvents: CalendarEvent[] = [
@@ -116,4 +118,3 @@ export const mockSettings: Settings = {
   units: 'imperial',
   version: '0.1.0',
 };
-
