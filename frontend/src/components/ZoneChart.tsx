@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { ZoneBucket } from '../api/types';
+import { dash } from '../utils/format';
 
 const colors = ['#44d19d', '#5fb7ff', '#f6bd60', '#ff8f70', '#ff6b6b'];
 
@@ -9,6 +10,14 @@ interface ZoneChartProps {
 }
 
 export function ZoneChart({ data }: ZoneChartProps) {
+  if (data.length === 0) {
+    return (
+      <Box sx={{ width: '100%', height: 220, display: 'grid', placeItems: 'center' }}>
+        <Typography color="text.secondary">{dash}</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ width: '100%', height: 220 }}>
       <ResponsiveContainer>
@@ -33,4 +42,3 @@ export function ZoneChart({ data }: ZoneChartProps) {
     </Box>
   );
 }
-

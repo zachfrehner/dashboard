@@ -8,13 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
 import { getCalendarEvents, getCurrentWeather, getCyclingSummary } from '../api/dashboardApi';
-import { formatDateTime, formatDuration, formatMiles } from '../utils/format';
-
-const newsItems = [
-  'Training headlines ready for a news API source',
-  'Local weather and road alerts can land here',
-  'Strava and cycling news hooks can be added next',
-];
+import { dash, formatDateTime, formatDuration, formatFeet, formatInteger, formatMiles, formatNumberUnit } from '../utils/format';
 
 export function HomePage() {
   const weather = useQuery({ queryKey: ['weather', 'current'], queryFn: getCurrentWeather });
@@ -23,7 +17,6 @@ export function HomePage() {
   const now = new Date();
   const currentTime = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(now);
   const currentDate = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'short', day: 'numeric' }).format(now);
-  const weeklyHours = cycling.data ? formatDuration(cycling.data.movingTimeSeconds) : '...';
   const upcomingEvents = events.data?.slice(0, 4) ?? [];
 
   return (
@@ -54,14 +47,14 @@ export function HomePage() {
           <Stack direction="row" spacing={2} alignItems="flex-end" justifyContent="space-between">
             <Box>
               <Typography sx={{ fontSize: { xs: '2.4rem', md: '3.2rem' }, lineHeight: 1, fontWeight: 800 }}>
-                {weather.data ? `${Math.round(weather.data.temperatureF)}°F` : '...'}
+                {weather.data?.temperatureF !== null && weather.data?.temperatureF !== undefined ? `${Math.round(weather.data.temperatureF)} F` : dash}
               </Typography>
-              <Typography color="text.secondary">{weather.data?.condition ?? 'Checking weather'}</Typography>
+              <Typography color="text.secondary">{weather.data?.condition ?? dash}</Typography>
             </Box>
             <Stack spacing={0.75} sx={{ minWidth: 138 }}>
-              <MetricLine label="Wind" value={weather.data ? `${weather.data.windMph} mph` : '...'} />
-              <MetricLine label="Sunrise" value={weather.data?.sunrise ?? '5:42 AM'} />
-              <MetricLine label="Sunset" value={weather.data?.sunset ?? '8:31 PM'} />
+              <MetricLine label="Wind" value={formatNumberUnit(weather.data?.windMph, 'mph')} />
+              <MetricLine label="Sunrise" value={weather.data?.sunrise ?? dash} />
+              <MetricLine label="Sunset" value={weather.data?.sunset ?? dash} />
             </Stack>
           </Stack>
         </Stack>
@@ -70,29 +63,27 @@ export function HomePage() {
       <HomePanel title="Cycling" icon={<DirectionsBikeIcon />} accent="#44d19d">
         <Stack spacing={2.5} sx={{ height: '100%', justifyContent: 'center' }}>
           <Stack direction="row" spacing={2} alignItems="stretch">
-            <MetricBlock label="Week Miles" value={cycling.data ? formatMiles(cycling.data.distanceMiles) : '...'} />
-            <MetricBlock label="Week Hours" value={weeklyHours} />
+            <MetricBlock label="Week Miles" value={formatMiles(cycling.data?.distanceMiles)} />
+            <MetricBlock label="Week Hours" value={formatDuration(cycling.data?.movingTimeSeconds)} />
           </Stack>
           <Stack direction="row" spacing={1.25} flexWrap="wrap" useFlexGap>
-            <Chip label={cycling.data ? `${Math.round(cycling.data.elevationFeet).toLocaleString()} ft` : 'Elevation ...'} />
-            <Chip label={cycling.data ? `${cycling.data.calories.toLocaleString()} kcal` : 'Calories ...'} />
-            <Chip label={cycling.data ? `${cycling.data.averageHeartRateBpm} bpm avg` : 'HR ...'} />
+            <Chip label={`Elevation ${formatFeet(cycling.data?.elevationFeet)}`} />
+            <Chip label={`Calories ${formatInteger(cycling.data?.calories)}`} />
+            <Chip label={`HR ${formatNumberUnit(cycling.data?.averageHeartRateBpm, 'bpm')}`} />
           </Stack>
         </Stack>
       </HomePanel>
 
       <HomePanel title="Calendar" icon={<CalendarMonthIcon />} accent="#5fb7ff">
         <Stack spacing={1.5} sx={{ height: '100%', overflow: 'hidden' }}>
-          {upcomingEvents.length === 0 && (
-            <Typography color="text.secondary">No upcoming activities</Typography>
-          )}
+          {upcomingEvents.length === 0 && <Typography color="text.secondary">{dash}</Typography>}
           {upcomingEvents.map((event) => (
             <Stack key={event.id} spacing={0.25}>
               <Typography fontWeight={800} noWrap>
-                {event.title}
+                {event.title || dash}
               </Typography>
               <Typography color="text.secondary" noWrap>
-                {formatDateTime(event.startsAt)}{event.location ? ` · ${event.location}` : ''}
+                {formatDateTime(event.startsAt)}{event.location ? ` - ${event.location}` : ''}
               </Typography>
             </Stack>
           ))}
@@ -101,9 +92,9 @@ export function HomePage() {
 
       <HomePanel title="Top Stories" icon={<ArticleIcon />} accent="#ff6b6b">
         <Stack spacing={1.5} divider={<Divider flexItem />}>
-          {newsItems.map((item) => (
+          {[0, 1, 2].map((item) => (
             <Typography key={item} fontWeight={700}>
-              {item}
+              {dash}
             </Typography>
           ))}
         </Stack>

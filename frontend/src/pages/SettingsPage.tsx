@@ -3,10 +3,15 @@ import { useQuery } from '@tanstack/react-query';
 import { getSettings } from '../api/dashboardApi';
 import { DashboardCard } from '../components/DashboardCard';
 import { PageHeader } from '../components/PageHeader';
+import { dash } from '../utils/format';
 
 export function SettingsPage() {
   const settings = useQuery({ queryKey: ['settings'], queryFn: getSettings });
-  const integrations = settings.data ? [settings.data.strava, settings.data.googleCalendar, settings.data.weather] : [];
+  const integrations = settings.data ? [settings.data.strava, settings.data.googleCalendar, settings.data.weather] : [
+    { name: 'Strava', connected: false, provider: dash },
+    { name: 'Google Calendar', connected: false, provider: dash },
+    { name: 'Weather', connected: false, provider: dash },
+  ];
 
   return (
     <Stack spacing={3}>
@@ -20,16 +25,15 @@ export function SettingsPage() {
           </Grid>
         ))}
         <Grid item xs={12} md={4}>
-          <DashboardCard title="Display" value={settings.data?.displayMode ?? 'kiosk'} />
+          <DashboardCard title="Display" value={settings.data?.displayMode ?? dash} />
         </Grid>
         <Grid item xs={12} md={4}>
-          <DashboardCard title="Units" value={settings.data?.units ?? 'imperial'} />
+          <DashboardCard title="Units" value={settings.data?.units ?? dash} />
         </Grid>
         <Grid item xs={12} md={4}>
-          <DashboardCard title="About" value={settings.data?.version ?? '0.1.0'} />
+          <DashboardCard title="About" value={settings.data?.version ?? dash} />
         </Grid>
       </Grid>
     </Stack>
   );
 }
-

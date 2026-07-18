@@ -1,40 +1,30 @@
 import { apiClient } from './client';
-import { mockCyclingSummary, mockEvents, mockRideDetail, mockSettings, mockWeather } from './mockData';
 import type { CalendarEvent, CyclingSummary, MetabolicActivity, MetabolicAnalysis, MetabolicStatus, RideDetail, Settings, WeatherCurrent } from './types';
 
-const withFallback = async <T>(request: () => Promise<{ data: T }>, fallback: T): Promise<T> => {
-  if (import.meta.env.MODE === 'test') {
-    return fallback;
-  }
-
-  try {
-    const response = await request();
-    return response.data;
-  } catch {
-    return fallback;
-  }
+export const getCurrentWeather = async () => {
+  const response = await apiClient.get<WeatherCurrent>('/api/weather/current');
+  return response.data;
 };
 
-export const getCurrentWeather = () =>
-  withFallback<WeatherCurrent>(() => apiClient.get('/api/weather/current'), mockWeather);
+export const getCalendarEvents = async () => {
+  const response = await apiClient.get<CalendarEvent[]>('/api/calendar/events');
+  return response.data;
+};
 
-export const getCalendarEvents = () =>
-  withFallback<CalendarEvent[]>(() => apiClient.get('/api/calendar/events'), mockEvents);
+export const getCyclingSummary = async (period: string) => {
+  const response = await apiClient.get<CyclingSummary>(`/api/cycling/${period}`);
+  return response.data;
+};
 
-export const getCyclingSummary = (period: string) =>
-  withFallback<CyclingSummary>(
-    () => apiClient.get(`/api/cycling/${period}`),
-    { ...mockCyclingSummary, period: period.toUpperCase() as CyclingSummary['period'] },
-  );
+export const getRideDetail = async (rideId: string) => {
+  const response = await apiClient.get<RideDetail>(`/api/cycling/rides/${rideId}`);
+  return response.data;
+};
 
-export const getRideDetail = (rideId: string) =>
-  withFallback<RideDetail>(() => apiClient.get(`/api/cycling/rides/${rideId}`), {
-    ...mockRideDetail,
-    id: rideId,
-  });
-
-export const getSettings = () =>
-  withFallback<Settings>(() => apiClient.get('/api/settings'), mockSettings);
+export const getSettings = async () => {
+  const response = await apiClient.get<Settings>('/api/settings');
+  return response.data;
+};
 
 export const closeKiosk = async () => {
   if (import.meta.env.MODE === 'test') {
@@ -50,12 +40,10 @@ export const closeKiosk = async () => {
   }
 };
 
-export const getMetabolicStatus = () =>
-  withFallback<MetabolicStatus>(() => apiClient.get('/api/metabolic/status'), {
-    configured: false,
-    connected: false,
-    athlete: null,
-  });
+export const getMetabolicStatus = async () => {
+  const response = await apiClient.get<MetabolicStatus>('/api/metabolic/status');
+  return response.data;
+};
 
 export const getMetabolicActivities = async () => {
   const response = await apiClient.get<MetabolicActivity[]>('/api/metabolic/activities');

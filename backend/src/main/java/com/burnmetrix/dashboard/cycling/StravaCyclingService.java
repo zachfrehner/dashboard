@@ -38,23 +38,21 @@ public class StravaCyclingService implements CyclingService {
 
     private final MetabolicProperties properties;
     private final ObjectMapper objectMapper;
-    private final MockCyclingService fallback;
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
-    public StravaCyclingService(MetabolicProperties properties, ObjectMapper objectMapper, MockCyclingService fallback) {
+    public StravaCyclingService(MetabolicProperties properties, ObjectMapper objectMapper) {
         this.properties = properties;
         this.objectMapper = objectMapper;
-        this.fallback = fallback;
     }
 
     @Override
     public CyclingSummaryResponse summary(CyclingPeriod period) {
         try {
             if (!configured() || readToken() == null) {
-                return fallback.summary(period);
+                return unavailableSummary(period);
             }
             if (period != CyclingPeriod.TODAY && period != CyclingPeriod.WEEK) {
-                return fallback.summary(period);
+                return unavailableSummary(period);
             }
             List<JsonNode> activities = activities(period);
             if (activities.isEmpty()) {
@@ -137,7 +135,7 @@ public class StravaCyclingService implements CyclingService {
                     heartRateZones(weighted(heartRateWeight, weightedHeartRate)),
                     recentRides);
         } catch (Exception ignored) {
-            return fallback.summary(period);
+            return unavailableSummary(period);
         }
     }
 
@@ -145,7 +143,7 @@ public class StravaCyclingService implements CyclingService {
     public RideDetailResponse rideDetail(String rideId) {
         try {
             if (!configured() || readToken() == null) {
-                return fallback.rideDetail(rideId);
+                return unavailableRideDetail(rideId);
             }
             JsonNode activity = stravaApi("/activities/" + rideId);
             JsonNode streams = stravaApi("/activities/" + rideId + "/streams?keys=time,heartrate,watts,altitude&key_by_type=true");
@@ -161,7 +159,7 @@ public class StravaCyclingService implements CyclingService {
                     "Strava ride summary with BurnMetrix metabolic analysis available on the Calories page.",
                     activity.path("description").asText(""));
         } catch (Exception ignored) {
-            return fallback.rideDetail(rideId);
+            return unavailableRideDetail(rideId);
         }
     }
 
@@ -239,10 +237,21 @@ public class StravaCyclingService implements CyclingService {
     }
 
     private static CyclingSummaryResponse emptySummary(CyclingPeriod period) {
-        return new CyclingSummaryResponse(period, 0, 0, 0, 0, 0, 0, 0, 0, FTP_WATTS, 0, 0, 0, 0, 0, 0,
-                evenZones("Z1", "Z2", "Z3", "Z4", "Z5"),
-                evenZones("Easy", "Endurance", "Tempo", "Threshold", "Max"),
+        return new CyclingSummaryResponse(period, 0.0, 0, 0, 0.0, 0, 0.0, 0, 0, FTP_WATTS, 0, 0, 0.0, 0.0, 0, 0,
+                List.of(),
+                List.of(),
                 List.of());
+    }
+
+    private static CyclingSummaryResponse unavailableSummary(CyclingPeriod period) {
+        return new CyclingSummaryResponse(period, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                List.of(),
+                List.of(),
+                List.of());
+    }
+
+    private static RideDetailResponse unavailableRideDetail(String rideId) {
+        return new RideDetailResponse(rideId, null, null, unavailableSummary(CyclingPeriod.TODAY), List.of(), List.of(), List.of(), null, null);
     }
 
     private static List<ChartPointResponse> chart(JsonNode streams, String timeKey, String valueKey) {
@@ -280,45 +289,11 @@ public class StravaCyclingService implements CyclingService {
     }
 
     private static List<ZoneBucketResponse> powerZones(double averagePower) {
-        if (averagePower <= 0) {
-            return evenZones("Z1", "Z2", "Z3", "Z4", "Z5");
-        }
-        double ratio = averagePower / FTP_WATTS;
-        if (ratio < 0.55) {
-            return List.of(new ZoneBucketResponse("Z1", 62), new ZoneBucketResponse("Z2", 25), new ZoneBucketResponse("Z3", 8), new ZoneBucketResponse("Z4", 4), new ZoneBucketResponse("Z5", 1));
-        }
-        if (ratio < 0.76) {
-            return List.of(new ZoneBucketResponse("Z1", 18), new ZoneBucketResponse("Z2", 52), new ZoneBucketResponse("Z3", 20), new ZoneBucketResponse("Z4", 8), new ZoneBucketResponse("Z5", 2));
-        }
-        if (ratio < 0.9) {
-            return List.of(new ZoneBucketResponse("Z1", 10), new ZoneBucketResponse("Z2", 24), new ZoneBucketResponse("Z3", 42), new ZoneBucketResponse("Z4", 18), new ZoneBucketResponse("Z5", 6));
-        }
-        return List.of(new ZoneBucketResponse("Z1", 6), new ZoneBucketResponse("Z2", 14), new ZoneBucketResponse("Z3", 24), new ZoneBucketResponse("Z4", 38), new ZoneBucketResponse("Z5", 18));
+        return List.of();
     }
 
     private static List<ZoneBucketResponse> heartRateZones(double averageHeartRate) {
-        if (averageHeartRate <= 0) {
-            return evenZones("Easy", "Endurance", "Tempo", "Threshold", "Max");
-        }
-        if (averageHeartRate < 120) {
-            return List.of(new ZoneBucketResponse("Easy", 58), new ZoneBucketResponse("Endurance", 28), new ZoneBucketResponse("Tempo", 10), new ZoneBucketResponse("Threshold", 3), new ZoneBucketResponse("Max", 1));
-        }
-        if (averageHeartRate < 145) {
-            return List.of(new ZoneBucketResponse("Easy", 20), new ZoneBucketResponse("Endurance", 48), new ZoneBucketResponse("Tempo", 22), new ZoneBucketResponse("Threshold", 8), new ZoneBucketResponse("Max", 2));
-        }
-        if (averageHeartRate < 160) {
-            return List.of(new ZoneBucketResponse("Easy", 8), new ZoneBucketResponse("Endurance", 24), new ZoneBucketResponse("Tempo", 42), new ZoneBucketResponse("Threshold", 20), new ZoneBucketResponse("Max", 6));
-        }
-        return List.of(new ZoneBucketResponse("Easy", 4), new ZoneBucketResponse("Endurance", 12), new ZoneBucketResponse("Tempo", 26), new ZoneBucketResponse("Threshold", 40), new ZoneBucketResponse("Max", 18));
-    }
-
-    private static List<ZoneBucketResponse> evenZones(String... labels) {
-        return List.of(
-                new ZoneBucketResponse(labels[0], 20),
-                new ZoneBucketResponse(labels[1], 20),
-                new ZoneBucketResponse(labels[2], 20),
-                new ZoneBucketResponse(labels[3], 20),
-                new ZoneBucketResponse(labels[4], 20));
+        return List.of();
     }
 
     private double calories(JsonNode activity) {

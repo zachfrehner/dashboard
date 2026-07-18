@@ -122,7 +122,7 @@ function AnalysisPanel({
   onUpdate: (analysis: MetabolicAnalysis) => void;
 }) {
   if (loading) {
-    return <DashboardCard title="Analysis" value="Analyzing..." detail="Comparing heart-rate stream against the lab CSV." />;
+    return <DashboardCard title="Analysis" value="Analyzing" detail="Comparing heart-rate stream against the lab CSV." />;
   }
 
   if (error) {
@@ -177,7 +177,7 @@ function AnalysisPanel({
             {analysis.report}
           </Box>
           <Button startIcon={<UploadIcon />} variant="contained" onClick={() => onUpdate(analysis)} disabled={updating}>
-            {updated ? 'Updated' : updating ? 'Updating...' : 'Update ride description'}
+            {updated ? 'Updated' : updating ? 'Updating' : 'Update ride description'}
           </Button>
         </Stack>
       </DashboardCard>

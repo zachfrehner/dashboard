@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getCalendarEvents } from '../api/dashboardApi';
 import { DashboardCard } from '../components/DashboardCard';
 import { PageHeader } from '../components/PageHeader';
-import { formatDateTime } from '../utils/format';
+import { dash, formatDateTime } from '../utils/format';
 
 export function CalendarPage() {
   const events = useQuery({ queryKey: ['calendar', 'events'], queryFn: getCalendarEvents });
@@ -15,11 +15,14 @@ export function CalendarPage() {
         <Grid item xs={12} md={5}>
           <DashboardCard title="Today">
             <Stack spacing={2}>
+              {(events.data ?? []).length === 0 && (
+                <Typography color="text.secondary">{dash}</Typography>
+              )}
               {events.data?.map((event) => (
                 <Box key={event.id} sx={{ borderLeft: '4px solid', borderColor: 'primary.main', pl: 2 }}>
-                  <Typography fontWeight={800}>{event.title}</Typography>
+                  <Typography fontWeight={800}>{event.title || dash}</Typography>
                   <Typography color="text.secondary">{formatDateTime(event.startsAt)}</Typography>
-                  <Typography color="text.secondary">{event.location}</Typography>
+                  <Typography color="text.secondary">{event.location || dash}</Typography>
                 </Box>
               ))}
             </Stack>
@@ -46,7 +49,7 @@ export function CalendarPage() {
                     color: index < 2 ? 'text.disabled' : 'text.secondary',
                   }}
                 >
-                  {index + 1}
+                  {dash}
                 </Box>
               ))}
             </Box>
@@ -56,4 +59,3 @@ export function CalendarPage() {
     </Stack>
   );
 }
-

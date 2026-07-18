@@ -24,13 +24,11 @@ public class OpenMeteoWeatherService implements WeatherService {
 
     private final WeatherProperties properties;
     private final ObjectMapper objectMapper;
-    private final MockWeatherService fallback;
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
-    public OpenMeteoWeatherService(WeatherProperties properties, ObjectMapper objectMapper, MockWeatherService fallback) {
+    public OpenMeteoWeatherService(WeatherProperties properties, ObjectMapper objectMapper) {
         this.properties = properties;
         this.objectMapper = objectMapper;
-        this.fallback = fallback;
     }
 
     @Override
@@ -41,7 +39,7 @@ public class OpenMeteoWeatherService implements WeatherService {
                     .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() >= 400) {
-                return fallback.currentConditions();
+                return unavailable();
             }
             JsonNode root = objectMapper.readTree(response.body());
             JsonNode current = root.path("current");
@@ -58,8 +56,12 @@ public class OpenMeteoWeatherService implements WeatherService {
                     displayTime(daily.path("sunrise").path(0).asText("")),
                     displayTime(daily.path("sunset").path(0).asText("")));
         } catch (Exception ignored) {
-            return fallback.currentConditions();
+            return unavailable();
         }
+    }
+
+    private static WeatherCurrentResponse unavailable() {
+        return new WeatherCurrentResponse("Open-Meteo", null, null, null, null, null, null, null, null, null);
     }
 
     private String url() {
@@ -77,7 +79,7 @@ public class OpenMeteoWeatherService implements WeatherService {
         try {
             return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME).atZone(java.time.ZoneId.systemDefault()).toInstant();
         } catch (Exception ignored) {
-            return Instant.now();
+            return null;
         }
     }
 

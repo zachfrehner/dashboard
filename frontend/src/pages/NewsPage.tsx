@@ -5,22 +5,7 @@ import { Box, Chip, Grid, Stack, Typography } from '@mui/material';
 
 import { DashboardCard } from '../components/DashboardCard';
 import { PageHeader } from '../components/PageHeader';
-
-const leadStory = {
-  title: 'Top news feed ready for API integration',
-  source: 'BurnMetrix News',
-  time: 'Live soon',
-  summary:
-    'This screen is structured for a proper headline feed with source, recency, category, and short summaries once a news API or webhook is connected.',
-};
-
-const stories = [
-  { title: 'Cycling and endurance headlines', source: 'Sports', time: 'Placeholder', category: 'Cycling' },
-  { title: 'Local alerts and weather impacts', source: 'Local', time: 'Placeholder', category: 'Local' },
-  { title: 'Technology and health updates', source: 'General', time: 'Placeholder', category: 'Health' },
-  { title: 'Market and world brief', source: 'World', time: 'Placeholder', category: 'World' },
-  { title: 'Training science notes', source: 'Performance', time: 'Placeholder', category: 'Training' },
-];
+import { dash } from '../utils/format';
 
 const categories = ['Top', 'Local', 'Cycling', 'Health', 'World'];
 
@@ -42,31 +27,27 @@ export function NewsPage() {
                 <Box sx={{ color: 'primary.main', display: 'flex' }}>
                   <ArticleIcon />
                 </Box>
-                <Typography variant="h2">{leadStory.title}</Typography>
+                <Typography variant="h2">{dash}</Typography>
               </Stack>
-              <Typography color="text.secondary">{leadStory.summary}</Typography>
+              <Typography color="text.secondary">{dash}</Typography>
               <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                <Chip size="small" icon={<PublicIcon />} label={leadStory.source} />
-                <Chip size="small" icon={<TrendingUpIcon />} label={leadStory.time} />
+                <Chip size="small" icon={<PublicIcon />} label={dash} />
+                <Chip size="small" icon={<TrendingUpIcon />} label={dash} />
               </Stack>
             </Stack>
           </DashboardCard>
         </Grid>
 
         <Grid item xs={12} md={5}>
-          <DashboardCard title="Feed Status" value="Ready">
-            <Typography color="text.secondary">
-              Next step is choosing a source: NewsAPI, RSS feeds, Home Assistant webhook, or a small backend aggregator.
-            </Typography>
-          </DashboardCard>
+          <DashboardCard title="Feed Status" value={dash} />
         </Grid>
 
         <Grid item xs={12}>
           <DashboardCard title="Top Stories">
             <Stack spacing={1.5}>
-              {stories.map((story) => (
+              {[0, 1, 2, 3, 4].map((story) => (
                 <Box
-                  key={story.title}
+                  key={story}
                   sx={{
                     display: 'grid',
                     gridTemplateColumns: { xs: '1fr', sm: '1fr auto' },
@@ -79,13 +60,13 @@ export function NewsPage() {
                 >
                   <Box sx={{ minWidth: 0 }}>
                     <Typography fontWeight={800} noWrap>
-                      {story.title}
+                      {dash}
                     </Typography>
                     <Typography color="text.secondary" noWrap>
-                      {story.source} · {story.time}
+                      {dash}
                     </Typography>
                   </Box>
-                  <Chip label={story.category} size="small" />
+                  <Chip label={dash} size="small" />
                 </Box>
               ))}
             </Stack>

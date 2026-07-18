@@ -1,68 +1,45 @@
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getCurrentWeather } from '../api/dashboardApi';
 import { DashboardCard } from '../components/DashboardCard';
 import { MetricGrid } from '../components/MetricGrid';
 import { PageHeader } from '../components/PageHeader';
-
-const hourly = [
-  { label: 'Now', temp: 72 },
-  { label: '1p', temp: 75 },
-  { label: '2p', temp: 77 },
-  { label: '3p', temp: 76 },
-  { label: '4p', temp: 73 },
-  { label: '5p', temp: 70 },
-];
+import { dash, formatNumberUnit } from '../utils/format';
 
 export function WeatherPage() {
   const weather = useQuery({ queryKey: ['weather', 'current'], queryFn: getCurrentWeather });
   const current = weather.data;
+  const temperature = current?.temperatureF !== null && current?.temperatureF !== undefined ? `${Math.round(current.temperatureF)} F` : dash;
+  const feelsLike = current?.feelsLikeF !== null && current?.feelsLikeF !== undefined ? `Feels like ${Math.round(current.feelsLikeF)} F - ${current.provider}` : dash;
 
   return (
     <Stack spacing={3}>
-      <PageHeader title="Weather" subtitle="Provider-ready conditions, forecast, and environment data" />
+      <PageHeader title="Weather" subtitle="Current conditions and environment data" />
       <Grid container spacing={2}>
         <Grid item xs={12} md={5}>
-          <DashboardCard title="Current Conditions" value={current ? `${Math.round(current.temperatureF)}°F` : '...'} detail={current?.condition}>
-            {current && (
-              <Typography color="text.secondary">
-                Feels like {Math.round(current.feelsLikeF)}°F · {current.provider}
-              </Typography>
-            )}
+          <DashboardCard title="Current Conditions" value={temperature} detail={current?.condition ?? dash}>
+            <Typography color="text.secondary">{feelsLike}</Typography>
           </DashboardCard>
         </Grid>
         <Grid item xs={12} md={7}>
-          <DashboardCard title="Hourly Forecast">
-            <Box sx={{ height: 220 }}>
-              <ResponsiveContainer>
-                <LineChart data={hourly}>
-                  <XAxis dataKey="label" stroke="#a9b4c2" tickLine={false} axisLine={false} />
-                  <YAxis stroke="#a9b4c2" tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={{ background: '#111820', border: '1px solid rgba(255,255,255,0.12)' }} />
-                  <Line type="monotone" dataKey="temp" stroke="#5fb7ff" strokeWidth={3} dot={{ r: 5 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </Box>
-          </DashboardCard>
+          <DashboardCard title="Forecast" value={dash} />
         </Grid>
       </Grid>
       <MetricGrid
         metrics={[
-          { title: 'Wind', value: current ? `${current.windMph} mph` : '...' },
-          { title: 'Humidity', value: current ? `${current.humidityPercent}%` : '...' },
-          { title: 'UV Index', value: current?.uvIndex ?? '...' },
-          { title: 'Air Quality', value: '42', detail: 'Mock AQI' },
-          { title: 'Sunrise', value: '5:42 AM' },
-          { title: 'Sunset', value: '8:31 PM' },
+          { title: 'Wind', value: formatNumberUnit(current?.windMph, 'mph') },
+          { title: 'Humidity', value: current?.humidityPercent !== null && current?.humidityPercent !== undefined ? `${current.humidityPercent}%` : dash },
+          { title: 'UV Index', value: current?.uvIndex ?? dash },
+          { title: 'Air Quality', value: dash },
+          { title: 'Sunrise', value: current?.sunrise ?? dash },
+          { title: 'Sunset', value: current?.sunset ?? dash },
         ]}
       />
       <DashboardCard title="Radar">
         <Box sx={{ minHeight: 220, border: '1px dashed rgba(255,255,255,0.18)', borderRadius: 2, display: 'grid', placeItems: 'center' }}>
-          <Typography color="text.secondary">Radar image placeholder</Typography>
+          <Typography color="text.secondary">{dash}</Typography>
         </Box>
       </DashboardCard>
     </Stack>
   );
 }
-

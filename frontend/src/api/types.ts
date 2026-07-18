@@ -1,14 +1,14 @@
 export interface WeatherCurrent {
   provider: string;
-  condition: string;
-  temperatureF: number;
-  feelsLikeF: number;
-  humidityPercent: number;
-  windMph: number;
-  uvIndex: number;
-  observedAt: string;
-  sunrise?: string;
-  sunset?: string;
+  condition: string | null;
+  temperatureF: number | null;
+  feelsLikeF: number | null;
+  humidityPercent: number | null;
+  windMph: number | null;
+  uvIndex: number | null;
+  observedAt: string | null;
+  sunrise: string | null;
+  sunset: string | null;
 }
 
 export interface CalendarEvent {
@@ -35,21 +35,21 @@ export interface RideSummary {
 
 export interface CyclingSummary {
   period: 'TODAY' | 'WEEK' | 'MONTH' | 'YEAR' | 'LIFETIME';
-  distanceMiles: number;
-  rideTimeSeconds: number;
-  movingTimeSeconds: number;
-  elevationFeet: number;
-  calories: number;
-  averageSpeedMph: number;
-  averagePowerWatts: number;
-  normalizedPowerWatts: number;
-  ftpWatts: number;
-  averageHeartRateBpm: number;
-  averageCadenceRpm: number;
-  tss: number;
-  trainingLoad: number;
-  fatCalories: number;
-  carbCalories: number;
+  distanceMiles: number | null;
+  rideTimeSeconds: number | null;
+  movingTimeSeconds: number | null;
+  elevationFeet: number | null;
+  calories: number | null;
+  averageSpeedMph: number | null;
+  averagePowerWatts: number | null;
+  normalizedPowerWatts: number | null;
+  ftpWatts: number | null;
+  averageHeartRateBpm: number | null;
+  averageCadenceRpm: number | null;
+  tss: number | null;
+  trainingLoad: number | null;
+  fatCalories: number | null;
+  carbCalories: number | null;
   powerZones: ZoneBucket[];
   heartRateZones: ZoneBucket[];
   recentRides: RideSummary[];
@@ -62,14 +62,14 @@ export interface ChartPoint {
 
 export interface RideDetail {
   id: string;
-  name: string;
-  startedAt: string;
+  name: string | null;
+  startedAt: string | null;
   summary: CyclingSummary;
   power: ChartPoint[];
   heartRate: ChartPoint[];
   elevation: ChartPoint[];
-  burnMetrixSummary: string;
-  notes: string;
+  burnMetrixSummary: string | null;
+  notes: string | null;
 }
 
 export interface IntegrationStatus {
