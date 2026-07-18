@@ -101,6 +101,7 @@ sed "s/User=pi/User=${SERVICE_USER}/g" "${PROJECT_ROOT}/scripts/burnmetrix-backe
 sed "s/User=pi/User=${SERVICE_USER}/g; s#/home/pi#/home/${SERVICE_USER}#g; s#/usr/bin/chromium-browser#${CHROMIUM_COMMAND}#g" "${PROJECT_ROOT}/scripts/burnmetrix-kiosk.service" >/etc/systemd/system/burnmetrix-kiosk.service
 install -m 755 "${PROJECT_ROOT}/scripts/start-dashboard.sh" /usr/local/bin/burnmetrix-start
 install -m 755 "${PROJECT_ROOT}/scripts/stop-dashboard.sh" /usr/local/bin/burnmetrix-stop
+install -m 755 "${PROJECT_ROOT}/scripts/clear-cache-dashboard.sh" /usr/local/bin/burnmetrix-clear-cache
 
 systemctl daemon-reload
 systemctl enable nginx
@@ -110,3 +111,4 @@ systemctl restart nginx
 echo "BurnMetrix Dashboard installed."
 echo "Start it manually with: burnmetrix-start"
 echo "Stop it manually with: burnmetrix-stop"
+echo "Clear Chromium cache and restart with: burnmetrix-clear-cache"

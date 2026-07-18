@@ -73,6 +73,12 @@ Stop the dashboard:
 burnmetrix-stop
 ```
 
+Clear Chromium cache and restart the dashboard:
+
+```bash
+burnmetrix-clear-cache
+```
+
 Check services:
 
 ```bash

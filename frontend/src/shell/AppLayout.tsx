@@ -21,7 +21,7 @@ const navItems = [
   { label: 'Settings', path: '/settings', icon: <SettingsIcon /> },
 ];
 
-const drawerWidth = 212;
+const drawerWidth = 176;
 
 export function AppLayout() {
   const [confirmClose, setConfirmClose] = useState(false);
@@ -47,7 +47,7 @@ export function AppLayout() {
           },
         }}
       >
-        <Toolbar sx={{ minHeight: 88, px: 3 }}>
+        <Toolbar sx={{ minHeight: { xs: 64, md: 88 }, px: { xs: 2, md: 3 } }}>
           <Box>
             <Typography fontWeight={800} fontSize="1.15rem">
               Frehner Home
@@ -58,7 +58,7 @@ export function AppLayout() {
           </Box>
         </Toolbar>
         <Divider />
-        <List sx={{ px: 1.5, py: 2, flexGrow: 1 }}>
+        <List sx={{ px: 1, py: { xs: 1, md: 2 }, flexGrow: 1 }}>
           {navItems.map((item) => (
             <ListItemButton
               key={item.path}
@@ -66,26 +66,26 @@ export function AppLayout() {
               to={item.path}
               end={item.path === '/'}
               sx={{
-                minHeight: 58,
+                minHeight: { xs: 42, md: 58 },
                 borderRadius: 2,
-                mb: 0.75,
+                mb: { xs: 0.25, md: 0.75 },
                 '&.active': {
                   backgroundColor: 'rgba(68, 209, 157, 0.14)',
                   color: 'primary.main',
                 },
               }}
             >
-              <ListItemIcon sx={{ minWidth: 42, color: 'inherit' }}>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 700 }} />
+              <ListItemIcon sx={{ minWidth: { xs: 34, md: 42 }, color: 'inherit' }}>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 700, fontSize: '0.92rem' }} />
             </ListItemButton>
           ))}
         </List>
-        <Box sx={{ p: 1.5 }}>
+        <Box sx={{ p: 1 }}>
           <Button
             fullWidth
             color="error"
             variant="outlined"
-            size="large"
+            size="small"
             startIcon={<PowerSettingsNewIcon />}
             onClick={() => setConfirmClose(true)}
           >
@@ -93,7 +93,7 @@ export function AppLayout() {
           </Button>
         </Box>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, minWidth: 0, p: { xs: 2, md: 3 }, pb: 5 }}>
+      <Box component="main" sx={{ flexGrow: 1, minWidth: 0, p: { xs: 1, md: 3 }, pb: { xs: 1, md: 5 } }}>
         <Outlet />
       </Box>
       <Dialog open={confirmClose} onClose={() => setConfirmClose(false)}>

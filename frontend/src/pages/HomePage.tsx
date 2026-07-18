@@ -23,12 +23,21 @@ export function HomePage() {
     <Box
       sx={{
         height: { xs: 'auto', md: 'calc(100vh - 88px)' },
-        minHeight: { md: 0 },
+        minHeight: 0,
         overflow: 'hidden',
         display: 'grid',
         gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
         gridTemplateRows: { xs: 'repeat(4, minmax(220px, auto))', md: '1fr 1fr' },
-        gap: 2,
+        gap: { xs: 1.25, md: 2 },
+        '@media (min-width:700px)': {
+          height: 'calc(100vh - 32px)',
+          gridTemplateColumns: '1fr 1fr',
+          gridTemplateRows: '1fr 1fr',
+        },
+        '@media (min-width:900px)': {
+          height: 'calc(100vh - 88px)',
+          gap: 2,
+        },
       }}
     >
       <HomePanel title="Weather" icon={<WbSunnyIcon />} accent="#f6bd60">
@@ -36,7 +45,7 @@ export function HomePage() {
           <Box>
             <Stack direction="row" spacing={1.5} alignItems="center">
               <AccessTimeIcon color="primary" />
-              <Typography sx={{ fontSize: { xs: '2.7rem', md: '3.8rem' }, lineHeight: 1, fontWeight: 800 }}>
+              <Typography sx={{ fontSize: { xs: '2.35rem', md: '3.8rem' }, lineHeight: 1, fontWeight: 800 }}>
                 {currentTime}
               </Typography>
             </Stack>
@@ -46,7 +55,7 @@ export function HomePage() {
           </Box>
           <Stack direction="row" spacing={2} alignItems="flex-end" justifyContent="space-between">
             <Box>
-              <Typography sx={{ fontSize: { xs: '2.4rem', md: '3.2rem' }, lineHeight: 1, fontWeight: 800 }}>
+              <Typography sx={{ fontSize: { xs: '2rem', md: '3.2rem' }, lineHeight: 1, fontWeight: 800 }}>
                 {weather.data?.temperatureF !== null && weather.data?.temperatureF !== undefined ? `${Math.round(weather.data.temperatureF)} F` : dash}
               </Typography>
               <Typography color="text.secondary">{weather.data?.condition ?? dash}</Typography>
@@ -111,7 +120,7 @@ function HomePanel({ title, icon, accent, children }: { title: string; icon: Rea
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 2,
         bgcolor: 'background.paper',
-        p: { xs: 2, md: 2.5 },
+        p: { xs: 1.5, md: 2.5 },
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -141,7 +150,7 @@ function MetricBlock({ label, value }: { label: string; value: string }) {
       <Typography color="text.secondary" fontWeight={700} sx={{ mb: 0.75 }}>
         {label}
       </Typography>
-      <Typography sx={{ fontSize: { xs: '2rem', md: '2.6rem' }, lineHeight: 1, fontWeight: 800 }}>
+      <Typography sx={{ fontSize: { xs: '1.7rem', md: '2.6rem' }, lineHeight: 1, fontWeight: 800 }}>
         {value}
       </Typography>
     </Box>
