@@ -63,10 +63,17 @@ sudo -u "${SERVICE_USER}" mvn -f "${PROJECT_ROOT}/backend/pom.xml" clean package
 cp "${PROJECT_ROOT}"/backend/target/*.jar "${INSTALL_DIR}/backend/burnmetrix-backend.jar"
 
 echo "Building frontend..."
-rm -rf "${PROJECT_ROOT}/frontend/node_modules"
-sudo -u "${SERVICE_USER}" npm --prefix "${PROJECT_ROOT}/frontend" ci --include=optional
-sudo -u "${SERVICE_USER}" npm --prefix "${PROJECT_ROOT}/frontend" run build
-rsync -a --delete "${PROJECT_ROOT}/frontend/dist/" "${INSTALL_DIR}/frontend/"
+FRONTEND_BUILD_DIR="$(mktemp -d)"
+trap 'rm -rf "${FRONTEND_BUILD_DIR}"' EXIT
+rsync -a \
+  --exclude node_modules \
+  --exclude dist \
+  "${PROJECT_ROOT}/frontend/" \
+  "${FRONTEND_BUILD_DIR}/"
+rm -f "${FRONTEND_BUILD_DIR}/package-lock.json"
+sudo -u "${SERVICE_USER}" npm --prefix "${FRONTEND_BUILD_DIR}" install --include=optional
+sudo -u "${SERVICE_USER}" npm --prefix "${FRONTEND_BUILD_DIR}" run build
+rsync -a --delete "${FRONTEND_BUILD_DIR}/dist/" "${INSTALL_DIR}/frontend/"
 
 cat >/etc/nginx/sites-available/burnmetrix-dashboard <<NGINX
 server {
