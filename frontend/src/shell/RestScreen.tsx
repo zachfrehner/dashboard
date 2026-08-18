@@ -67,11 +67,11 @@ export function RestScreen() {
             lineHeight: 1,
           }}
         >
-          {isMorning ? 'Good morning' : 'Sleep tight'}
+          {isMorning ? 'Good Morning' : 'Sleep tight'}
         </Typography>
         {isMorning && (
-          <Typography sx={{ mt: 2, color: 'rgba(233,255,245,0.68)', fontSize: { xs: '1rem', md: '1.35rem' } }}>
-            Tap to open Frehner Home
+          <Typography sx={{ mt: 2, color: 'rgba(233,255,245,0.72)', fontSize: { xs: '1.3rem', md: '2rem' }, fontWeight: 800 }}>
+            Get After It
           </Typography>
         )}
       </Box>
