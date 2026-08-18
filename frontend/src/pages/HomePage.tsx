@@ -1,19 +1,20 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import ArticleIcon from '@mui/icons-material/Article';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
+import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import { Box, Chip, Divider, Stack, Typography } from '@mui/material';
+import { Box, Chip, Stack, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
-import { getCalendarEvents, getCurrentWeather, getCyclingSummary } from '../api/dashboardApi';
+import { getCalendarEvents, getCurrentWeather, getCyclingSummary, getDailyQuote } from '../api/dashboardApi';
 import { dash, formatDateTime, formatDuration, formatFeet, formatInteger, formatMiles, formatNumberUnit } from '../utils/format';
 
 export function HomePage() {
   const weather = useQuery({ queryKey: ['weather', 'current'], queryFn: getCurrentWeather });
   const events = useQuery({ queryKey: ['calendar', 'events'], queryFn: getCalendarEvents });
   const cycling = useQuery({ queryKey: ['cycling', 'week'], queryFn: () => getCyclingSummary('week') });
+  const quote = useQuery({ queryKey: ['quote', 'today'], queryFn: getDailyQuote, staleTime: 1000 * 60 * 60 });
   const now = new Date();
   const currentTime = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(now);
   const currentDate = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'short', day: 'numeric' }).format(now);
@@ -99,13 +100,19 @@ export function HomePage() {
         </Stack>
       </HomePanel>
 
-      <HomePanel title="Top Stories" icon={<ArticleIcon />} accent="#ff6b6b">
-        <Stack spacing={1.5} divider={<Divider flexItem />}>
-          {[0, 1, 2].map((item) => (
-            <Typography key={item} fontWeight={700}>
-              {dash}
+      <HomePanel title="Quote" icon={<FormatQuoteIcon />} accent="#ff6b6b">
+        <Stack spacing={1.5} sx={{ height: '100%', justifyContent: 'center' }}>
+          <Typography sx={{ fontSize: { xs: '1.2rem', md: '1.55rem' }, lineHeight: 1.25, fontWeight: 800 }}>
+            {quote.data?.quote ?? dash}
+          </Typography>
+          <Box>
+            <Typography color="text.secondary" fontWeight={800}>
+              {quote.data?.author ? `- ${quote.data.author}` : dash}
             </Typography>
-          ))}
+            <Typography color="text.secondary" fontSize="0.78rem" sx={{ mt: 1 }}>
+              {quote.data?.quote ? quote.data.attribution : dash}
+            </Typography>
+          </Box>
         </Stack>
       </HomePanel>
     </Box>

@@ -87,6 +87,13 @@ export interface Settings {
   version: string;
 }
 
+export interface Quote {
+  quote: string | null;
+  author: string | null;
+  provider: string;
+  attribution: string;
+}
+
 export interface MetabolicStatus {
   configured: boolean;
   connected: boolean;
