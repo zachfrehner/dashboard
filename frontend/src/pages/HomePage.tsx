@@ -5,25 +5,43 @@ import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
 import { getCalendarEvents, getCurrentWeather, getCyclingSummary, getDailyQuote } from '../api/dashboardApi';
 import { dash, formatDateTime, formatDuration, formatFeet, formatInteger, formatMiles, formatNumberUnit } from '../utils/format';
 
 export function HomePage() {
+  const [now, setNow] = useState(() => new Date());
   const weather = useQuery({ queryKey: ['weather', 'current'], queryFn: getCurrentWeather });
   const events = useQuery({ queryKey: ['calendar', 'events'], queryFn: getCalendarEvents });
   const cycling = useQuery({ queryKey: ['cycling', 'week'], queryFn: () => getCyclingSummary('week') });
   const quote = useQuery({ queryKey: ['quote', 'today'], queryFn: getDailyQuote, staleTime: 1000 * 60 * 60 });
-  const now = new Date();
   const currentTime = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(now);
   const currentDate = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'short', day: 'numeric' }).format(now);
   const upcomingEvents = events.data?.slice(0, 4) ?? [];
 
+  useEffect(() => {
+    let intervalId: number | undefined;
+
+    const timeoutId = window.setTimeout(() => {
+      setNow(new Date());
+      intervalId = window.setInterval(() => setNow(new Date()), 60_000);
+    }, millisecondsUntilNextMinute());
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      if (intervalId !== undefined) {
+        window.clearInterval(intervalId);
+      }
+    };
+  }, []);
+
   return (
     <Box
       sx={{
-        height: { xs: 'auto', md: 'calc(100vh - 88px)' },
+        height: '100%',
+        maxHeight: '100%',
         minHeight: 0,
         overflow: 'hidden',
         display: 'grid',
@@ -31,12 +49,10 @@ export function HomePage() {
         gridTemplateRows: { xs: 'repeat(4, minmax(220px, auto))', md: '1fr 1fr' },
         gap: { xs: 1.25, md: 2 },
         '@media (min-width:700px)': {
-          height: 'calc(100vh - 32px)',
           gridTemplateColumns: '1fr 1fr',
           gridTemplateRows: '1fr 1fr',
         },
         '@media (min-width:900px)': {
-          height: 'calc(100vh - 88px)',
           gap: 2,
         },
       }}
@@ -117,6 +133,11 @@ export function HomePage() {
       </HomePanel>
     </Box>
   );
+}
+
+function millisecondsUntilNextMinute() {
+  const now = new Date();
+  return 60_000 - (now.getSeconds() * 1000 + now.getMilliseconds());
 }
 
 function HomePanel({ title, icon, accent, children }: { title: string; icon: ReactNode; accent: string; children: ReactNode }) {

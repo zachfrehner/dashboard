@@ -31,7 +31,7 @@ export function AppLayout() {
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <Drawer
         variant="permanent"
         sx={{
@@ -92,7 +92,17 @@ export function AppLayout() {
           </Button>
         </Box>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, minWidth: 0, p: { xs: 1, md: 3 }, pb: { xs: 1, md: 5 } }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          minWidth: 0,
+          height: '100vh',
+          overflow: 'auto',
+          p: { xs: 1, md: 3 },
+          pb: { xs: 1, md: 3 },
+        }}
+      >
         <Outlet />
       </Box>
       <Dialog open={confirmClose} onClose={() => setConfirmClose(false)}>
