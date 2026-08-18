@@ -79,6 +79,12 @@ Clear Chromium cache and restart the dashboard:
 burnmetrix-clear-cache
 ```
 
+Pull latest code, rebuild, reinstall, clear cache, and restart:
+
+```bash
+burnmetrix-update
+```
+
 Check services:
 
 ```bash

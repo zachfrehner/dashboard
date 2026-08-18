@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { CalendarEvent, CyclingSummary, MetabolicActivity, MetabolicAnalysis, MetabolicStatus, Quote, RideDetail, Settings, WeatherCurrent } from './types';
+import type { CalendarEvent, CyclingSummary, MetabolicActivity, MetabolicAnalysis, MetabolicStatus, Quote, RideDetail, Settings, SystemStatus, WeatherCurrent } from './types';
 
 export const getCurrentWeather = async () => {
   const response = await apiClient.get<WeatherCurrent>('/api/weather/current');
@@ -28,6 +28,11 @@ export const getSettings = async () => {
 
 export const getDailyQuote = async () => {
   const response = await apiClient.get<Quote>('/api/quote/today');
+  return response.data;
+};
+
+export const getSystemStatus = async () => {
+  const response = await apiClient.get<SystemStatus>('/api/system/status');
   return response.data;
 };
 

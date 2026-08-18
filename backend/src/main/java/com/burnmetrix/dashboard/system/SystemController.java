@@ -1,6 +1,7 @@
 package com.burnmetrix.dashboard.system;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,9 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class SystemController {
 
     private final KioskService kioskService;
+    private final SystemStatusService systemStatusService;
 
-    public SystemController(KioskService kioskService) {
+    public SystemController(KioskService kioskService, SystemStatusService systemStatusService) {
         this.kioskService = kioskService;
+        this.systemStatusService = systemStatusService;
+    }
+
+    @GetMapping("/status")
+    public SystemStatusResponse status() {
+        return systemStatusService.currentStatus();
     }
 
     @PostMapping("/kiosk/close")

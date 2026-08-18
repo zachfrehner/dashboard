@@ -8,7 +8,7 @@ Type=simple
 User=pi
 Environment=DISPLAY=:0
 Environment=XAUTHORITY=/home/pi/.Xauthority
-ExecStart=/usr/bin/chromium-browser --noerrdialogs --disable-infobars --kiosk --app=http://localhost
+ExecStart=/usr/bin/chromium-browser --noerrdialogs --disable-infobars --disable-application-cache --disk-cache-size=1 --media-cache-size=1 --user-data-dir=/home/pi/.config/burnmetrix-kiosk --kiosk --app=http://localhost
 Restart=no
 
 [Install]

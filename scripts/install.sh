@@ -64,8 +64,7 @@ cp "${PROJECT_ROOT}"/backend/target/*.jar "${INSTALL_DIR}/backend/burnmetrix-bac
 
 echo "Building frontend..."
 rm -rf "${PROJECT_ROOT}/frontend/node_modules"
-rm -f "${PROJECT_ROOT}/frontend/package-lock.json"
-sudo -u "${SERVICE_USER}" npm --prefix "${PROJECT_ROOT}/frontend" install --include=optional
+sudo -u "${SERVICE_USER}" npm --prefix "${PROJECT_ROOT}/frontend" ci --include=optional
 sudo -u "${SERVICE_USER}" npm --prefix "${PROJECT_ROOT}/frontend" run build
 rsync -a --delete "${PROJECT_ROOT}/frontend/dist/" "${INSTALL_DIR}/frontend/"
 
@@ -88,7 +87,13 @@ server {
         proxy_set_header X-Real-IP \$remote_addr;
     }
 
+    location = /index.html {
+        add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0" always;
+        try_files /index.html =404;
+    }
+
     location / {
+        add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0" always;
         try_files \$uri \$uri/ /index.html;
     }
 }
@@ -102,6 +107,7 @@ sed "s/User=pi/User=${SERVICE_USER}/g; s#/home/pi#/home/${SERVICE_USER}#g; s#/us
 install -m 755 "${PROJECT_ROOT}/scripts/start-dashboard.sh" /usr/local/bin/burnmetrix-start
 install -m 755 "${PROJECT_ROOT}/scripts/stop-dashboard.sh" /usr/local/bin/burnmetrix-stop
 install -m 755 "${PROJECT_ROOT}/scripts/clear-cache-dashboard.sh" /usr/local/bin/burnmetrix-clear-cache
+install -m 755 "${PROJECT_ROOT}/scripts/update-pi.sh" /usr/local/bin/burnmetrix-update
 
 systemctl daemon-reload
 systemctl enable nginx
@@ -112,3 +118,4 @@ echo "BurnMetrix Dashboard installed."
 echo "Start it manually with: burnmetrix-start"
 echo "Stop it manually with: burnmetrix-stop"
 echo "Clear Chromium cache and restart with: burnmetrix-clear-cache"
+echo "Pull, rebuild, clear cache, and restart with: burnmetrix-update"

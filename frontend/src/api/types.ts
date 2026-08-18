@@ -94,6 +94,24 @@ export interface Quote {
   attribution: string;
 }
 
+export interface SystemStatus {
+  cpuTemperatureC: number | null;
+  load1: number | null;
+  load5: number | null;
+  load15: number | null;
+  memoryTotalMb: number | null;
+  memoryUsedMb: number | null;
+  memoryUsedPercent: number | null;
+  diskTotalGb: number | null;
+  diskUsedGb: number | null;
+  diskUsedPercent: number | null;
+  uptimeSeconds: number | null;
+  ipAddress: string | null;
+  backendStatus: string | null;
+  kioskStatus: string | null;
+  nginxStatus: string | null;
+}
+
 export interface MetabolicStatus {
   configured: boolean;
   connected: boolean;
