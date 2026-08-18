@@ -45,6 +45,7 @@ install -d -o "${SERVICE_USER}" -g "${SERVICE_USER}" "${INSTALL_DIR}/backend"
 install -d -o "${SERVICE_USER}" -g "${SERVICE_USER}" "${INSTALL_DIR}/frontend"
 install -d -o "${SERVICE_USER}" -g "${SERVICE_USER}" "${INSTALL_DIR}/database/data"
 install -d /etc/burnmetrix-dashboard
+printf '%s\n' "${PROJECT_ROOT}" >/etc/burnmetrix-dashboard/project-root
 if [[ ! -f /etc/burnmetrix-dashboard/backend.env ]]; then
   cat >/etc/burnmetrix-dashboard/backend.env <<ENV
 # Optional Strava integration for the Calories page.

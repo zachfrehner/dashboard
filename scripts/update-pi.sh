@@ -5,6 +5,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [[ -n "${BURNMETRIX_PROJECT_ROOT:-}" ]]; then
   PROJECT_ROOT="${BURNMETRIX_PROJECT_ROOT}"
+elif [[ -f /etc/burnmetrix-dashboard/project-root ]]; then
+  PROJECT_ROOT="$(cat /etc/burnmetrix-dashboard/project-root)"
 elif [[ -f "${SCRIPT_DIR}/../scripts/install.sh" ]]; then
   PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 elif [[ -f "${PWD}/scripts/install.sh" ]]; then
@@ -13,6 +15,12 @@ else
   RUN_USER="${SUDO_USER:-${USER}}"
   USER_HOME="$(getent passwd "${RUN_USER}" | cut -d: -f6)"
   PROJECT_ROOT="${USER_HOME}/burnmetrix-dashboard"
+fi
+
+if [[ ! -d "${PROJECT_ROOT}/.git" ]]; then
+  echo "BurnMetrix git repository not found at: ${PROJECT_ROOT}" >&2
+  echo "Run this once from your cloned repo: cd ~/burnmetrix-dashboard && ./scripts/update-pi.sh" >&2
+  exit 1
 fi
 
 cd "${PROJECT_ROOT}"
