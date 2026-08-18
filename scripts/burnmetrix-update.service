@@ -1,0 +1,9 @@
+[Unit]
+Description=BurnMetrix Dashboard Scheduled Update
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+Environment=BURNMETRIX_PROJECT_ROOT=/home/pi/burnmetrix-dashboard
+ExecStart=/usr/local/bin/burnmetrix-update

@@ -111,6 +111,8 @@ rm -f /etc/nginx/sites-enabled/default
 
 sed "s/User=pi/User=${SERVICE_USER}/g" "${PROJECT_ROOT}/scripts/burnmetrix-backend.service" >/etc/systemd/system/burnmetrix-backend.service
 sed "s/User=pi/User=${SERVICE_USER}/g; s#/home/pi#/home/${SERVICE_USER}#g; s#/usr/bin/chromium-browser#${CHROMIUM_COMMAND}#g" "${PROJECT_ROOT}/scripts/burnmetrix-kiosk.service" >/etc/systemd/system/burnmetrix-kiosk.service
+sed "s#/home/pi/burnmetrix-dashboard#${PROJECT_ROOT}#g" "${PROJECT_ROOT}/scripts/burnmetrix-update.service" >/etc/systemd/system/burnmetrix-update.service
+install -m 644 "${PROJECT_ROOT}/scripts/burnmetrix-update.timer" /etc/systemd/system/burnmetrix-update.timer
 install -m 755 "${PROJECT_ROOT}/scripts/start-dashboard.sh" /usr/local/bin/burnmetrix-start
 install -m 755 "${PROJECT_ROOT}/scripts/stop-dashboard.sh" /usr/local/bin/burnmetrix-stop
 install -m 755 "${PROJECT_ROOT}/scripts/clear-cache-dashboard.sh" /usr/local/bin/burnmetrix-clear-cache
@@ -118,6 +120,7 @@ install -m 755 "${PROJECT_ROOT}/scripts/update-pi.sh" /usr/local/bin/burnmetrix-
 
 systemctl daemon-reload
 systemctl enable nginx
+systemctl enable burnmetrix-update.timer
 systemctl disable burnmetrix-backend burnmetrix-kiosk || true
 systemctl restart nginx
 
@@ -126,3 +129,4 @@ echo "Start it manually with: burnmetrix-start"
 echo "Stop it manually with: burnmetrix-stop"
 echo "Clear Chromium cache and restart with: burnmetrix-clear-cache"
 echo "Pull, rebuild, clear cache, and restart with: burnmetrix-update"
+echo "Automatic updates run daily at 4:45 AM with: burnmetrix-update.timer"

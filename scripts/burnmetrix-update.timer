@@ -1,0 +1,11 @@
+[Unit]
+Description=Run BurnMetrix Dashboard updates daily
+
+[Timer]
+OnCalendar=*-*-* 04:45:00
+Persistent=true
+RandomizedDelaySec=10m
+Unit=burnmetrix-update.service
+
+[Install]
+WantedBy=timers.target

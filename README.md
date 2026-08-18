@@ -88,6 +88,8 @@ Pull latest code, rebuild, reinstall, clear cache, and restart:
 burnmetrix-update
 ```
 
+The kiosk automatically shows a dim `Sleep tight` screen from 9:30 PM to 6:00 AM. At 6:00 AM it changes to `Good morning` until the screen is tapped. The Pi also installs a daily update timer at 4:45 AM.
+
 The Calories page includes the Strava metabolic analysis workflow from the earlier BurnMetrix app. Configure `STRAVA_CLIENT_ID` and `STRAVA_CLIENT_SECRET` for the backend, then connect Strava from the dashboard.
 
 For shared calendar events, set `CALENDAR_ICAL_URL` in `/etc/burnmetrix-dashboard/backend.env` to a private iCalendar `.ics` subscription URL.

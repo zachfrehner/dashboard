@@ -85,6 +85,12 @@ Pull latest code, rebuild, reinstall, clear cache, and restart:
 burnmetrix-update
 ```
 
+The installed systemd timer runs the same update command daily at 4:45 AM:
+
+```bash
+systemctl status burnmetrix-update.timer
+```
+
 Check services:
 
 ```bash

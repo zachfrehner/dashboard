@@ -9,6 +9,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { closeKiosk } from '../api/dashboardApi';
+import { RestScreen } from './RestScreen';
 
 const navItems = [
   { label: 'Home', path: '/', icon: <HomeIcon /> },
@@ -108,6 +109,7 @@ export function AppLayout() {
           </Button>
         </DialogActions>
       </Dialog>
+      <RestScreen />
     </Box>
   );
 }
